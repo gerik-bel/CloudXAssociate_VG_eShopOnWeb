@@ -1,8 +1,6 @@
 ﻿using MediatR;
 using Microsoft.eShopWeb.Web.Interfaces;
 using Microsoft.eShopWeb.Web.Services;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Microsoft.eShopWeb.Web.Configuration;
 
@@ -16,6 +14,7 @@ public static class ConfigureWebServices
         services.AddScoped<ICatalogItemViewModelService, CatalogItemViewModelService>();
         services.Configure<CatalogSettings>(configuration);
         services.AddScoped<ICatalogViewModelService, CachedCatalogViewModelService>();
+        services.AddScoped<IReserveOrderService, ReserveOrderService>();
 
         return services;
     }
