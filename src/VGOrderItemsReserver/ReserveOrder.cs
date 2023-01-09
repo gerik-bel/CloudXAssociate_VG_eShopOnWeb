@@ -34,6 +34,12 @@ public static class ReserveOrder
             {
                 var requestBody = await reader.ReadToEndAsync();
                 dynamic data = JsonConvert.DeserializeObject(requestBody);
+                double total = 0;
+                foreach (dynamic item in data.OrderItems)
+                {
+                    total = total + (double)item.Units * (double)item.UnitPrice;
+                }
+                data.TotalPrice = total;
                 data.id = Guid.NewGuid().ToString();
                 var response = await container.CreateItemAsync(data);
             }
