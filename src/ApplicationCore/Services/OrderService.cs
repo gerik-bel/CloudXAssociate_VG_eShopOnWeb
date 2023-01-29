@@ -27,7 +27,7 @@ public class OrderService : IOrderService
         _itemRepository = itemRepository;
     }
 
-    public async Task<Order> CreateOrderAsync(int basketId, Address shippingAddress)
+    public async Task CreateOrderAsync(int basketId, Address shippingAddress)
     {
         var basketSpec = new BasketWithItemsSpecification(basketId);
         var basket = await _basketRepository.FirstOrDefaultAsync(basketSpec);
@@ -47,6 +47,7 @@ public class OrderService : IOrderService
         }).ToList();
 
         var order = new Order(basket.BuyerId, shippingAddress, items);
-        return await _orderRepository.AddAsync(order);
+
+        await _orderRepository.AddAsync(order);
     }
 }
