@@ -1,8 +1,6 @@
-﻿using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
+﻿using System.Text.Json;
+using Azure.Messaging.ServiceBus;
 using BlazorShared;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.eShopWeb.ApplicationCore.Entities.OrderAggregate;
 using Microsoft.eShopWeb.Web.Interfaces;
 using Microsoft.Extensions.Options;
@@ -20,27 +18,18 @@ public class ReserveOrderService : IReserveOrderService
         _logger = logger;
     }
 
-    public async Task<IActionResult> ReserveOrder(Order order)
+    public async Task ReserveOrder(Order order)
     {
-        using (var client = new HttpClient())
+        try
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, _baseUrlConfiguration.ReserveService))
-            {
-                request.Content = new StringContent(JsonSerializer.Serialize(order), Encoding.UTF8, "application/json");
-                request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-                try
-                {
-                    var response = await client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead)
-                        .ConfigureAwait(false);
-                }
-                catch (Exception ex)
-                {
-                    _logger.LogError(ex, ex.Message);
-                    return new BadRequestResult();
-                }
-                return new OkResult();
-            }
+            await using var client = new ServiceBusClient(_baseUrlConfiguration.ReserveService);
+            await using ServiceBusSender sender = client.CreateSender(_baseUrlConfiguration.ReserveServiceQueue);
+            var message = new ServiceBusMessage(JsonSerializer.Serialize(order));
+            await sender.SendMessageAsync(message);
         }
-
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+        }
     }
 }

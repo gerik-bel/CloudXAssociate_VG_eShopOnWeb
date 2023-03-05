@@ -20,6 +20,7 @@ public class CheckoutModel : PageModel
     private string? _username = null;
     private readonly IBasketViewModelService _basketViewModelService;
     private readonly IAppLogger<CheckoutModel> _logger;
+    private readonly IOrderProcessorService _orderProcessorService;
     private readonly IReserveOrderService _reserveOrderService;
 
     public CheckoutModel(IBasketService basketService,
@@ -27,6 +28,7 @@ public class CheckoutModel : PageModel
         SignInManager<ApplicationUser> signInManager,
         IOrderService orderService,
         IAppLogger<CheckoutModel> logger,
+        IOrderProcessorService orderProcessorService,
         IReserveOrderService reserveOrderService)
     {
         _basketService = basketService;
@@ -34,6 +36,7 @@ public class CheckoutModel : PageModel
         _orderService = orderService;
         _basketViewModelService = basketViewModelService;
         _logger = logger;
+        _orderProcessorService = orderProcessorService;
         _reserveOrderService = reserveOrderService;
     }
 
@@ -60,6 +63,7 @@ public class CheckoutModel : PageModel
             var order = await _orderService.CreateOrderAsync(BasketModel.Id, new Address("123 Main St.", "Kent", "OH", "United States", "44240"));
             await _basketService.DeleteBasketAsync(BasketModel.Id);
             await _reserveOrderService.ReserveOrder(order);
+            await _orderProcessorService.ProcessOrder(order);
         }
         catch (EmptyBasketOnCheckoutException emptyBasketOnCheckoutException)
         {

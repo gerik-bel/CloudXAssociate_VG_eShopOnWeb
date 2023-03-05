@@ -7,5 +7,6 @@ public class BaseUrlConfiguration
     public string ApiBase { get; set; }
     public string WebBase { get; set; }
     public string ReserveService { get; set; }
+    public string ReserveServiceQueue { get; set; }
     public string OrderProcessorService { get; set; }
 }
