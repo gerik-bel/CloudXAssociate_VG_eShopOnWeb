@@ -23,7 +23,7 @@ public class OrderProcessorService : IOrderProcessorService
     {
         using (var client = new HttpClient())
         {
-            using (var request = new HttpRequestMessage(HttpMethod.Post, _baseUrlConfiguration.ReserveService))
+            using (var request = new HttpRequestMessage(HttpMethod.Post, _baseUrlConfiguration.OrderProcessorService))
             {
                 request.Content = new StringContent(JsonSerializer.Serialize(order), Encoding.UTF8, "application/json");
                 request.Content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
