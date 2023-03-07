@@ -14,6 +14,7 @@ public static class ConfigureWebServices
         services.AddScoped<ICatalogItemViewModelService, CatalogItemViewModelService>();
         services.Configure<CatalogSettings>(configuration);
         services.AddScoped<ICatalogViewModelService, CachedCatalogViewModelService>();
+        services.AddScoped<IOrderProcessorService, OrderProcessorService>();
         services.AddScoped<IReserveOrderService, ReserveOrderService>();
 
         return services;
